@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "i+NEI5/R5yZfpWVH/Iw0SfM4aMGpgBsHzisnWWfnxv5KuUciDPwpwe/Yzii0aEenX6ad9+RitMlGA3fZmxYopw==",
+  "success": true,
+  "projectFilePath": "/Users/thomas/Desktop/CARL/CARL/CARL.csproj",
+  "expectedPackageFiles": [
+    "/Users/thomas/.nuget/packages/antlr4.runtime.standard/4.13.1/antlr4.runtime.standard.4.13.1.nupkg.sha512"
+  ],
+  "logs": []
+}
