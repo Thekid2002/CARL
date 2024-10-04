@@ -1,4 +1,5 @@
-using System.Linq.Expressions;
+using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using CARL.AST;
 using CARL.AST.Expressions;
 using CARL.AST.Expressions.Term;
@@ -8,84 +9,109 @@ namespace CARL;
 
 public class ToAstVisitor : CARLBaseVisitor<AstNode>
 {
-    public override AstNode VisitProgram(CARLParser.ProgramContext context)
+    public override AST.Program VisitProgram(CARLParser.ProgramContext context)
     {
         var expression = (Expression) context.expression().Accept(this);
         return new AST.Program(expression);
     }
 
-    public override AstNode VisitExpression(CARLParser.ExpressionContext context)
+    #region Expressions
+
+    public override Expression VisitExpression(CARLParser.ExpressionContext context)
     {
-        if (context.children.Count == 1) return base.VisitExpression(context);
-
-        var equalityExpressions = context.equalityExpression().Select(ne => ne.Accept(this) as Expression).ToList();
-        var expression = context.expression()?.Accept(this) as Expression;
-
-        return new BinaryOp(equalityExpressions[0], context.GetChild(1).GetText(), expression ?? equalityExpressions[1])
-            { LineNum = context.Start.Line };
+        return VisitBinaryExpressionContext(context.equalityExpression(), context.children, context.Start.Line);
     }
 
-    public override AstNode VisitRelationExpression(CARLParser.RelationExpressionContext context)
+    public override Expression VisitEqualityExpression(CARLParser.EqualityExpressionContext context)
     {
-        if (context.children.Count == 1) return base.VisitRelationExpression(context);
-
-        var binaryExpressions = context.binaryExpression().Select(ne => ne.Accept(this) as Expression).ToList();
-        var relationExpression = context.relationExpression()?.Accept(this) as Expression;
-
-        return new BinaryOp(binaryExpressions[0], context.GetChild(1).GetText(), relationExpression ?? binaryExpressions[1])
-            { LineNum = context.Start.Line };
+        return VisitBinaryExpressionContext(context.relationExpression(), context.children, context.Start.Line);
     }
 
-    public override AstNode VisitBinaryExpression(CARLParser.BinaryExpressionContext context)
+    public override Expression VisitRelationExpression(CARLParser.RelationExpressionContext context)
     {
-        if (context.children.Count == 1) return base.VisitBinaryExpression(context);
-
-        var multExpressions = context.multExpression().Select(ne => ne.Accept(this) as Expression).ToList();
-        var binaryExpression = context.binaryExpression()?.Accept(this) as Expression;
-
-        return new BinaryOp(multExpressions[0], context.GetChild(1).GetText(), binaryExpression ?? multExpressions[1])
-            { LineNum = context.Start.Line };
+        return VisitBinaryExpressionContext(context.binaryExpression(), context.children, context.Start.Line);
     }
 
-    public override AstNode VisitMultExpression(CARLParser.MultExpressionContext context)
+    public override Expression VisitBinaryExpression(CARLParser.BinaryExpressionContext context)
     {
-        if (context.children.Count == 1) return base.VisitMultExpression(context);
-
-        var unaryExpressions = context.unaryExpression().Select(ne => ne.Accept(this) as Expression).ToList();
-        var multExpression = context.multExpression()?.Accept(this) as Expression;
-
-        return new BinaryOp(unaryExpressions[0], context.GetChild(1).GetText(), multExpression ?? unaryExpressions[1])
-            { LineNum = context.Start.Line };
+        return VisitBinaryExpressionContext(context.multExpression(), context.children, context.Start.Line);
     }
 
-    public override AstNode VisitUnaryExpression(CARLParser.UnaryExpressionContext context)
+    public override Expression VisitMultExpression(CARLParser.MultExpressionContext context)
     {
-        if (context.children.Count == 1) return base.VisitUnaryExpression(context);
+        return VisitBinaryExpressionContext(context.unaryExpression(), context.children, context.Start.Line);
+    }
+    
+    private Expression VisitBinaryExpressionContext<T>(IEnumerable<T> expressionsContext, IList<IParseTree> children, int line) where T : ParserRuleContext
+    {
+        var expressions = expressionsContext.Select(e => e.Accept(this) as Expression).ToList();
+    
+        var operators = children
+            .Where(c => c is ITerminalNode)
+            .Select(c => c.GetText())
+            .ToList();
+        
+        var leftOrPrimary = expressions[0];
 
-        var expression = context.term().Accept(this) as Expression;
+        if (expressions.Count == 1)
+        {
+            return leftOrPrimary;
+        }
 
-        return new UnaryOp(context.GetChild(0).GetText(), expression);
+        for (int i = 1; i < expressions.Count; i++)
+        {
+            Expression right = expressions[i];
+            leftOrPrimary = new BinaryOp(leftOrPrimary, operators[i - 1], right)
+            {
+                LineNum = line
+            };
+        }
+
+        return leftOrPrimary;
+    }
+    
+    public override Expression VisitUnaryExpression(CARLParser.UnaryExpressionContext context)
+    {
+        var rightOrPrimary = context.term().Accept(this) as Expression;
+
+        var operators = context.children
+            .TakeWhile(c => c is ITerminalNode)  // Assuming unary operators are terminal nodes
+            .Select(c => c.GetText())
+            .ToList();
+
+        foreach (var op in operators.AsEnumerable().Reverse())
+        {
+            rightOrPrimary = new UnaryOp(op, rightOrPrimary)
+            {
+                LineNum = context.Start.Line
+            };
+        }
+
+        return rightOrPrimary;
     }
 
-
-    public override AstNode VisitTerm(CARLParser.TermContext context)
+    
+    public override Expression VisitTerm(CARLParser.TermContext context)
     {
         if (context.NUM() != null)
         {
             return new Num(context.NUM().GetText()) {LineNum = context.Start.Line};
         }
-        else if (context.GetText() == "true" || context.GetText() == "false")
+        
+        if (context.GetText() == "true" || context.GetText() == "false")
         {
             return new Bool(context.GetText()) {LineNum = context.Start.Line};
         }
-        else if (context.expression() != null)
+        
+        if (context.expression() != null)
         {
-            return context.expression().Accept(this);
+            return context.expression().Accept(this) as Expression;
         }
-        else
-        {
-            throw new NotSupportedException($"Term type not supported: {context.GetText()}");
-        }
+        
+        throw new NotSupportedException($"Term type not supported: {context.GetText()}");
     }
+    
+    #endregion
+
 
 }
