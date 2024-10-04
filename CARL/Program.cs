@@ -16,7 +16,6 @@ static void Main(string[] args)
 
     var inputStream = CharStreams.fromString(fileContents);
     var lexer = new CARLLexer(inputStream);
-
     var errorListener = new ParserErrorListener();
     var tokenStream = new CommonTokenStream(lexer);
     var parser = new CARLParser(tokenStream);

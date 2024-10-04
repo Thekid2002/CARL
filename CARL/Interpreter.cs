@@ -35,24 +35,35 @@ public class Interpreter
                 var right = EvaluateExpression(binaryOp.Right);
                 if ((binaryOp.Op == "/" || binaryOp.Op == "%") && (double)right == 0)
                     throw new Exception("Division by zero is not allowed.");
+                
+                if(binaryOp.Op == "==")
+                    return left == right;
+                
+                if(binaryOp.Op == "!=")
+                    return left != right;
+                
+                if(left is bool && right is bool)
+                    return binaryOp.Op switch
+                    {
+                        "&&" => (bool)left && (bool)right,
+                        "||" => (bool)left || (bool)right,
+                    };
+                
+                if(left is double && right is double)
+                    return binaryOp.Op switch
+                    {
+                        "+" => (double)left + (double)right,
+                        "-" => (double)left - (double)right,
+                        "*" => (double)left * (double)right,
+                        "/" => (double)left / (double)right,
+                        "%" => (double)left % (double)right,
+                        "<" => (double)left < (double)right,
+                        ">" => (double)left > (double)right,
+                        "<=" => (double)left <= (double)right,
+                        ">=" => (double)left >= (double)right,
+                    };
 
-                return binaryOp.Op switch
-                {
-                    "+" => (double)left + (double)right,
-                    "-" => (double)left - (double)right,
-                    "*" => (double)left * (double)right,
-                    "/" => (double)left / (double)right,
-                    "%" => (double)left % (double)right,
-                    "==" => left == right,
-                    "!=" => left != right,
-                    "<" => (double)left < (double)right,
-                    ">" => (double)left > (double)right,
-                    "<=" => (double)left <= (double)right,
-                    ">=" => (double)left >= (double)right,
-                    "&&" => (bool)left && (bool)right,
-                    "||" => (bool)left || (bool)right,
-                    _ => throw new NotImplementedException()
-                };
+                throw new NotImplementedException(binaryOp.Op);
         }
 
         return null;
