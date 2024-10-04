@@ -1,7 +1,7 @@
-using System.Linq.Expressions;
 using CARL.AST;
 using CARL.AST.Expressions;
 using CARL.AST.Expressions.Term;
+using Xunit;
 using Expression = CARL.AST.Expressions.Expression;
 
 namespace CARL;
@@ -16,55 +16,114 @@ public class ToAstVisitor : CARLBaseVisitor<AstNode>
 
     public override AstNode VisitExpression(CARLParser.ExpressionContext context)
     {
-        if (context.children.Count == 1) return base.VisitExpression(context);
+        var leftOrPrimary = context.equalityExpression()[0].Accept(this) as Expression;
+        Assert.NotNull(leftOrPrimary);
 
-        var equalityExpressions = context.equalityExpression().Select(ne => ne.Accept(this) as Expression).ToList();
-        var expression = context.expression()?.Accept(this) as Expression;
+        var operatorIndex = 1;
+        for (int i = 1; i < context.equalityExpression().Length; i++)
+        {
+            Expression? right = context.equalityExpression()[i].Accept(this) as Expression;
+            leftOrPrimary = new BinaryOp(leftOrPrimary, context.GetChild(operatorIndex).GetText(), right)
+            {
+                LineNum = context.Start.Line
+            };
+            operatorIndex += 2;
+        }
 
-        return new BinaryOp(equalityExpressions[0], context.GetChild(1).GetText(), expression ?? equalityExpressions[1])
-            { LineNum = context.Start.Line };
+        return leftOrPrimary;
+    }
+
+    public override AstNode VisitEqualityExpression(CARLParser.EqualityExpressionContext context)
+    {
+        var leftOrPrimary = context.relationExpression()[0].Accept(this) as Expression;
+        Assert.NotNull(leftOrPrimary);
+
+        var operatorIndex = 1;
+
+        for (int i = 1; i < context.relationExpression().Length; i++)
+        {
+            Expression? right = context.relationExpression()[i].Accept(this) as Expression;
+            leftOrPrimary = new BinaryOp(leftOrPrimary, context.GetChild(operatorIndex).GetText(), right)
+            {
+                LineNum = context.Start.Line
+            };
+            operatorIndex += 2;
+        }
+
+        return leftOrPrimary;
     }
 
     public override AstNode VisitRelationExpression(CARLParser.RelationExpressionContext context)
     {
-        if (context.children.Count == 1) return base.VisitRelationExpression(context);
+        var leftOrPrimary = context.binaryExpression()[0].Accept(this) as Expression;
+        Assert.NotNull(leftOrPrimary);
 
-        var binaryExpressions = context.binaryExpression().Select(ne => ne.Accept(this) as Expression).ToList();
-        var relationExpression = context.relationExpression()?.Accept(this) as Expression;
+        var operatorIndex = 1;
 
-        return new BinaryOp(binaryExpressions[0], context.GetChild(1).GetText(), relationExpression ?? binaryExpressions[1])
-            { LineNum = context.Start.Line };
+        for (int i = 1; i < context.binaryExpression().Length; i++)
+        {
+            Expression? right = context.binaryExpression()[i].Accept(this) as Expression;
+            leftOrPrimary = new BinaryOp(leftOrPrimary, context.GetChild(operatorIndex).GetText(), right)
+            {
+                LineNum = context.Start.Line
+            };
+            operatorIndex += 2;
+        }
+
+        return leftOrPrimary;
     }
+    
+       
 
     public override AstNode VisitBinaryExpression(CARLParser.BinaryExpressionContext context)
     {
-        if (context.children.Count == 1) return base.VisitBinaryExpression(context);
+        var leftOrPrimary = context.multExpression()[0].Accept(this) as Expression;
+        Assert.NotNull(leftOrPrimary);
 
-        var multExpressions = context.multExpression().Select(ne => ne.Accept(this) as Expression).ToList();
-        var binaryExpression = context.binaryExpression()?.Accept(this) as Expression;
+        var operatorIndex = 1;
 
-        return new BinaryOp(multExpressions[0], context.GetChild(1).GetText(), binaryExpression ?? multExpressions[1])
-            { LineNum = context.Start.Line };
+        for (int i = 1; i < context.multExpression().Length; i++)
+        {
+            Expression? right = context.multExpression()[i].Accept(this) as Expression;
+            leftOrPrimary = new BinaryOp(leftOrPrimary, context.GetChild(operatorIndex).GetText(), right)
+            {
+                LineNum = context.Start.Line
+            };
+            operatorIndex += 2;
+        }
+
+        return leftOrPrimary;
     }
+
 
     public override AstNode VisitMultExpression(CARLParser.MultExpressionContext context)
     {
-        if (context.children.Count == 1) return base.VisitMultExpression(context);
+        var leftOrPrimary = context.unaryExpression()[0].Accept(this) as Expression;
+        Assert.NotNull(leftOrPrimary);
 
-        var unaryExpressions = context.unaryExpression().Select(ne => ne.Accept(this) as Expression).ToList();
-        var multExpression = context.multExpression()?.Accept(this) as Expression;
+        var operatorIndex = 1;
 
-        return new BinaryOp(unaryExpressions[0], context.GetChild(1).GetText(), multExpression ?? unaryExpressions[1])
-            { LineNum = context.Start.Line };
+        for (int i = 1; i < context.unaryExpression().Length; i++)
+        {
+            Expression? right = context.unaryExpression()[i].Accept(this) as Expression;
+            leftOrPrimary = new BinaryOp(leftOrPrimary, context.GetChild(operatorIndex).GetText(), right)
+            {
+                LineNum = context.Start.Line
+            };
+            operatorIndex += 2;
+        }
+
+        return leftOrPrimary;
     }
 
     public override AstNode VisitUnaryExpression(CARLParser.UnaryExpressionContext context)
     {
         if (context.children.Count == 1) return base.VisitUnaryExpression(context);
 
-        var expression = context.term().Accept(this) as Expression;
+        var rightOrPrimary = context.term().Accept(this) as Expression;
 
-        return new UnaryOp(context.GetChild(0).GetText(), expression);
+        return new UnaryOp(context.GetChild(0).GetText(), rightOrPrimary)
+            { LineNum = context.Start.Line };
     }
 
 

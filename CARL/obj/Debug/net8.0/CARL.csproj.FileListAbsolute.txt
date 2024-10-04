@@ -16,3 +16,8 @@
 /Users/thomas/Desktop/CARL/CARL/obj/Debug/net8.0/CARL.genruntimeconfig.cache
 /Users/thomas/Desktop/CARL/CARL/obj/Debug/net8.0/ref/CARL.dll
 /Users/thomas/Desktop/CARL/CARL/bin/Debug/net8.0/Frontend/test.carl
+/Users/thomas/Desktop/CARL/CARL/obj/Debug/net8.0/CARL.sourcelink.json
+/Users/thomas/Desktop/CARL/CARL/bin/Debug/net8.0/xunit.abstractions.dll
+/Users/thomas/Desktop/CARL/CARL/bin/Debug/net8.0/xunit.assert.dll
+/Users/thomas/Desktop/CARL/CARL/bin/Debug/net8.0/xunit.core.dll
+/Users/thomas/Desktop/CARL/CARL/bin/Debug/net8.0/xunit.execution.dotnet.dll

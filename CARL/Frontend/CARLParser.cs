@@ -99,6 +99,16 @@ public partial class CARLParser : Parser {
 		}
 		public override int RuleIndex { get { return RULE_program; } }
 		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.EnterProgram(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.ExitProgram(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICARLVisitor<TResult> typedVisitor = visitor as ICARLVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitProgram(this);
@@ -137,14 +147,21 @@ public partial class CARLParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public EqualityExpressionContext equalityExpression(int i) {
 			return GetRuleContext<EqualityExpressionContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
-		}
 		public ExpressionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_expression; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.EnterExpression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.ExitExpression(this);
+		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICARLVisitor<TResult> typedVisitor = visitor as ICARLVisitor<TResult>;
@@ -163,10 +180,11 @@ public partial class CARLParser : Parser {
 			{
 			State = 19;
 			equalityExpression();
-			State = 25;
+			State = 24;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if (_la==T__0 || _la==T__1) {
+			while (_la==T__0 || _la==T__1) {
+				{
 				{
 				State = 20;
 				_la = TokenStream.LA(1);
@@ -177,25 +195,14 @@ public partial class CARLParser : Parser {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 23;
+				State = 21;
+				equalityExpression();
+				}
+				}
+				State = 26;
 				ErrorHandler.Sync(this);
-				switch ( Interpreter.AdaptivePredict(TokenStream,0,Context) ) {
-				case 1:
-					{
-					State = 21;
-					equalityExpression();
-					}
-					break;
-				case 2:
-					{
-					State = 22;
-					expression();
-					}
-					break;
-				}
-				}
+				_la = TokenStream.LA(1);
 			}
-
 			}
 		}
 		catch (RecognitionException re) {
@@ -216,14 +223,21 @@ public partial class CARLParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public RelationExpressionContext relationExpression(int i) {
 			return GetRuleContext<RelationExpressionContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public EqualityExpressionContext equalityExpression() {
-			return GetRuleContext<EqualityExpressionContext>(0);
-		}
 		public EqualityExpressionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_equalityExpression; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.EnterEqualityExpression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.ExitEqualityExpression(this);
+		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICARLVisitor<TResult> typedVisitor = visitor as ICARLVisitor<TResult>;
@@ -242,10 +256,11 @@ public partial class CARLParser : Parser {
 			{
 			State = 27;
 			relationExpression();
-			State = 33;
+			State = 32;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if (_la==T__2 || _la==T__3) {
+			while (_la==T__2 || _la==T__3) {
+				{
 				{
 				State = 28;
 				_la = TokenStream.LA(1);
@@ -256,25 +271,14 @@ public partial class CARLParser : Parser {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 31;
+				State = 29;
+				relationExpression();
+				}
+				}
+				State = 34;
 				ErrorHandler.Sync(this);
-				switch ( Interpreter.AdaptivePredict(TokenStream,2,Context) ) {
-				case 1:
-					{
-					State = 29;
-					relationExpression();
-					}
-					break;
-				case 2:
-					{
-					State = 30;
-					equalityExpression();
-					}
-					break;
-				}
-				}
+				_la = TokenStream.LA(1);
 			}
-
 			}
 		}
 		catch (RecognitionException re) {
@@ -295,14 +299,21 @@ public partial class CARLParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public BinaryExpressionContext binaryExpression(int i) {
 			return GetRuleContext<BinaryExpressionContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public RelationExpressionContext relationExpression() {
-			return GetRuleContext<RelationExpressionContext>(0);
-		}
 		public RelationExpressionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_relationExpression; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.EnterRelationExpression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.ExitRelationExpression(this);
+		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICARLVisitor<TResult> typedVisitor = visitor as ICARLVisitor<TResult>;
@@ -321,10 +332,11 @@ public partial class CARLParser : Parser {
 			{
 			State = 35;
 			binaryExpression();
-			State = 41;
+			State = 40;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 480L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 480L) != 0)) {
+				{
 				{
 				State = 36;
 				_la = TokenStream.LA(1);
@@ -335,25 +347,14 @@ public partial class CARLParser : Parser {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 39;
+				State = 37;
+				binaryExpression();
+				}
+				}
+				State = 42;
 				ErrorHandler.Sync(this);
-				switch ( Interpreter.AdaptivePredict(TokenStream,4,Context) ) {
-				case 1:
-					{
-					State = 37;
-					binaryExpression();
-					}
-					break;
-				case 2:
-					{
-					State = 38;
-					relationExpression();
-					}
-					break;
-				}
-				}
+				_la = TokenStream.LA(1);
 			}
-
 			}
 		}
 		catch (RecognitionException re) {
@@ -374,14 +375,21 @@ public partial class CARLParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public MultExpressionContext multExpression(int i) {
 			return GetRuleContext<MultExpressionContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public BinaryExpressionContext binaryExpression() {
-			return GetRuleContext<BinaryExpressionContext>(0);
-		}
 		public BinaryExpressionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_binaryExpression; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.EnterBinaryExpression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.ExitBinaryExpression(this);
+		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICARLVisitor<TResult> typedVisitor = visitor as ICARLVisitor<TResult>;
@@ -400,10 +408,11 @@ public partial class CARLParser : Parser {
 			{
 			State = 43;
 			multExpression();
-			State = 49;
+			State = 48;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if (_la==T__8 || _la==T__9) {
+			while (_la==T__8 || _la==T__9) {
+				{
 				{
 				State = 44;
 				_la = TokenStream.LA(1);
@@ -414,25 +423,16 @@ public partial class CARLParser : Parser {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 47;
+				{
+				State = 45;
+				multExpression();
+				}
+				}
+				}
+				State = 50;
 				ErrorHandler.Sync(this);
-				switch ( Interpreter.AdaptivePredict(TokenStream,6,Context) ) {
-				case 1:
-					{
-					State = 45;
-					multExpression();
-					}
-					break;
-				case 2:
-					{
-					State = 46;
-					binaryExpression();
-					}
-					break;
-				}
-				}
+				_la = TokenStream.LA(1);
 			}
-
 			}
 		}
 		catch (RecognitionException re) {
@@ -453,14 +453,21 @@ public partial class CARLParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public UnaryExpressionContext unaryExpression(int i) {
 			return GetRuleContext<UnaryExpressionContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public MultExpressionContext multExpression() {
-			return GetRuleContext<MultExpressionContext>(0);
-		}
 		public MultExpressionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_multExpression; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.EnterMultExpression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.ExitMultExpression(this);
+		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICARLVisitor<TResult> typedVisitor = visitor as ICARLVisitor<TResult>;
@@ -479,10 +486,11 @@ public partial class CARLParser : Parser {
 			{
 			State = 51;
 			unaryExpression();
-			State = 57;
+			State = 56;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 14336L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 14336L) != 0)) {
+				{
 				{
 				State = 52;
 				_la = TokenStream.LA(1);
@@ -493,25 +501,14 @@ public partial class CARLParser : Parser {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 55;
+				State = 53;
+				unaryExpression();
+				}
+				}
+				State = 58;
 				ErrorHandler.Sync(this);
-				switch ( Interpreter.AdaptivePredict(TokenStream,8,Context) ) {
-				case 1:
-					{
-					State = 53;
-					unaryExpression();
-					}
-					break;
-				case 2:
-					{
-					State = 54;
-					multExpression();
-					}
-					break;
-				}
-				}
+				_la = TokenStream.LA(1);
 			}
-
 			}
 		}
 		catch (RecognitionException re) {
@@ -534,6 +531,16 @@ public partial class CARLParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_unaryExpression; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.EnterUnaryExpression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.ExitUnaryExpression(this);
+		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICARLVisitor<TResult> typedVisitor = visitor as ICARLVisitor<TResult>;
@@ -596,6 +603,16 @@ public partial class CARLParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_term; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.EnterTerm(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ICARLListener typedListener = listener as ICARLListener;
+			if (typedListener != null) typedListener.ExitTerm(this);
+		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICARLVisitor<TResult> typedVisitor = visitor as ICARLVisitor<TResult>;
@@ -661,29 +678,28 @@ public partial class CARLParser : Parser {
 
 	private static int[] _serializedATN = {
 		4,1,20,77,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
-		7,7,1,0,1,0,1,0,1,1,1,1,1,1,1,1,3,1,24,8,1,3,1,26,8,1,1,2,1,2,1,2,1,2,
-		3,2,32,8,2,3,2,34,8,2,1,3,1,3,1,3,1,3,3,3,40,8,3,3,3,42,8,3,1,4,1,4,1,
-		4,1,4,3,4,48,8,4,3,4,50,8,4,1,5,1,5,1,5,1,5,3,5,56,8,5,3,5,58,8,5,1,6,
-		5,6,61,8,6,10,6,12,6,64,9,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,3,7,75,
-		8,7,1,7,0,0,8,0,2,4,6,8,10,12,14,0,6,1,0,1,2,1,0,3,4,1,0,5,8,1,0,9,10,
-		1,0,11,13,2,0,10,10,14,14,82,0,16,1,0,0,0,2,19,1,0,0,0,4,27,1,0,0,0,6,
-		35,1,0,0,0,8,43,1,0,0,0,10,51,1,0,0,0,12,62,1,0,0,0,14,74,1,0,0,0,16,17,
-		3,2,1,0,17,18,5,0,0,1,18,1,1,0,0,0,19,25,3,4,2,0,20,23,7,0,0,0,21,24,3,
-		4,2,0,22,24,3,2,1,0,23,21,1,0,0,0,23,22,1,0,0,0,24,26,1,0,0,0,25,20,1,
-		0,0,0,25,26,1,0,0,0,26,3,1,0,0,0,27,33,3,6,3,0,28,31,7,1,0,0,29,32,3,6,
-		3,0,30,32,3,4,2,0,31,29,1,0,0,0,31,30,1,0,0,0,32,34,1,0,0,0,33,28,1,0,
-		0,0,33,34,1,0,0,0,34,5,1,0,0,0,35,41,3,8,4,0,36,39,7,2,0,0,37,40,3,8,4,
-		0,38,40,3,6,3,0,39,37,1,0,0,0,39,38,1,0,0,0,40,42,1,0,0,0,41,36,1,0,0,
-		0,41,42,1,0,0,0,42,7,1,0,0,0,43,49,3,10,5,0,44,47,7,3,0,0,45,48,3,10,5,
-		0,46,48,3,8,4,0,47,45,1,0,0,0,47,46,1,0,0,0,48,50,1,0,0,0,49,44,1,0,0,
-		0,49,50,1,0,0,0,50,9,1,0,0,0,51,57,3,12,6,0,52,55,7,4,0,0,53,56,3,12,6,
-		0,54,56,3,10,5,0,55,53,1,0,0,0,55,54,1,0,0,0,56,58,1,0,0,0,57,52,1,0,0,
-		0,57,58,1,0,0,0,58,11,1,0,0,0,59,61,7,5,0,0,60,59,1,0,0,0,61,64,1,0,0,
-		0,62,60,1,0,0,0,62,63,1,0,0,0,63,65,1,0,0,0,64,62,1,0,0,0,65,66,3,14,7,
-		0,66,13,1,0,0,0,67,75,5,19,0,0,68,75,5,15,0,0,69,75,5,16,0,0,70,71,5,17,
-		0,0,71,72,3,2,1,0,72,73,5,18,0,0,73,75,1,0,0,0,74,67,1,0,0,0,74,68,1,0,
-		0,0,74,69,1,0,0,0,74,70,1,0,0,0,75,15,1,0,0,0,12,23,25,31,33,39,41,47,
-		49,55,57,62,74
+		7,7,1,0,1,0,1,0,1,1,1,1,1,1,5,1,23,8,1,10,1,12,1,26,9,1,1,2,1,2,1,2,5,
+		2,31,8,2,10,2,12,2,34,9,2,1,3,1,3,1,3,5,3,39,8,3,10,3,12,3,42,9,3,1,4,
+		1,4,1,4,5,4,47,8,4,10,4,12,4,50,9,4,1,5,1,5,1,5,5,5,55,8,5,10,5,12,5,58,
+		9,5,1,6,5,6,61,8,6,10,6,12,6,64,9,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,7,1,
+		7,3,7,75,8,7,1,7,0,0,8,0,2,4,6,8,10,12,14,0,6,1,0,1,2,1,0,3,4,1,0,5,8,
+		1,0,9,10,1,0,11,13,2,0,10,10,14,14,77,0,16,1,0,0,0,2,19,1,0,0,0,4,27,1,
+		0,0,0,6,35,1,0,0,0,8,43,1,0,0,0,10,51,1,0,0,0,12,62,1,0,0,0,14,74,1,0,
+		0,0,16,17,3,2,1,0,17,18,5,0,0,1,18,1,1,0,0,0,19,24,3,4,2,0,20,21,7,0,0,
+		0,21,23,3,4,2,0,22,20,1,0,0,0,23,26,1,0,0,0,24,22,1,0,0,0,24,25,1,0,0,
+		0,25,3,1,0,0,0,26,24,1,0,0,0,27,32,3,6,3,0,28,29,7,1,0,0,29,31,3,6,3,0,
+		30,28,1,0,0,0,31,34,1,0,0,0,32,30,1,0,0,0,32,33,1,0,0,0,33,5,1,0,0,0,34,
+		32,1,0,0,0,35,40,3,8,4,0,36,37,7,2,0,0,37,39,3,8,4,0,38,36,1,0,0,0,39,
+		42,1,0,0,0,40,38,1,0,0,0,40,41,1,0,0,0,41,7,1,0,0,0,42,40,1,0,0,0,43,48,
+		3,10,5,0,44,45,7,3,0,0,45,47,3,10,5,0,46,44,1,0,0,0,47,50,1,0,0,0,48,46,
+		1,0,0,0,48,49,1,0,0,0,49,9,1,0,0,0,50,48,1,0,0,0,51,56,3,12,6,0,52,53,
+		7,4,0,0,53,55,3,12,6,0,54,52,1,0,0,0,55,58,1,0,0,0,56,54,1,0,0,0,56,57,
+		1,0,0,0,57,11,1,0,0,0,58,56,1,0,0,0,59,61,7,5,0,0,60,59,1,0,0,0,61,64,
+		1,0,0,0,62,60,1,0,0,0,62,63,1,0,0,0,63,65,1,0,0,0,64,62,1,0,0,0,65,66,
+		3,14,7,0,66,13,1,0,0,0,67,75,5,19,0,0,68,75,5,15,0,0,69,75,5,16,0,0,70,
+		71,5,17,0,0,71,72,3,2,1,0,72,73,5,18,0,0,73,75,1,0,0,0,74,67,1,0,0,0,74,
+		68,1,0,0,0,74,69,1,0,0,0,74,70,1,0,0,0,75,15,1,0,0,0,7,24,32,40,48,56,
+		62,74
 	};
 
 	public static readonly ATN _ATN =
